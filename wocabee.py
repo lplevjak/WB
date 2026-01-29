@@ -14,7 +14,6 @@ from selenium import webdriver
 import traceback
 import socket
 import subprocess
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.firefox.options import Options
 class wocabee:
     def __init__(self,udaje: tuple):
@@ -45,7 +44,8 @@ class wocabee:
         #    traceback.print_exception(e)
         options = Options()
         # Run Firefox in headless mode to improve stability in this environment
-        options.headless = True
+        # Use add_argument instead of deprecated headless property
+        options.add_argument('-headless')
         # Add additional headless args only on non-Windows systems (these flags are Linux-focused)
         try:
             import platform
@@ -113,9 +113,8 @@ class wocabee:
                 if 'Listening on 127.0.0.1:4444' in text:
                     try:
                         remote_url = 'http://127.0.0.1:4444'
-                        desired = DesiredCapabilities.FIREFOX.copy()
                         print(f"{self.info} Found manual geckodriver listening on 4444, attempting Remote connect")
-                        self.driver = webdriver.Remote(command_executor=remote_url, desired_capabilities=desired, options=options)
+                        self.driver = webdriver.Remote(command_executor=remote_url, options=options)
                         print(f"{self.ok} Connected to manual geckodriver via Remote {remote_url}")
                         return
                     except Exception:
@@ -186,12 +185,11 @@ class wocabee:
 
             # try to connect using Remote webdriver
             remote_url = f"http://127.0.0.1:{port}"
-            desired = DesiredCapabilities.FIREFOX.copy()
             # Try a few times to connect to the manual geckodriver
             for attempt in range(1, 6):
                 try:
                     print(f"{self.info} Attempting Remote connect to {remote_url} (try {attempt})")
-                    self.driver = webdriver.Remote(command_executor=remote_url, desired_capabilities=desired, options=options)
+                    self.driver = webdriver.Remote(command_executor=remote_url, options=options)
                     print(f"{self.ok} Connected to manual geckodriver (pid={proc.pid})")
                     return
                 except Exception as e:

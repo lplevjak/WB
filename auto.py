@@ -5,9 +5,11 @@ import threading
 from time import sleep
 from selenium.webdriver.common.by import By
 import getpass
-users = [
-    """(username, password),..."""
-]
+
+# Sem zadaj používateľov ako tuples: ("username", "password")
+# Príklad: users = [("meno", "heslo"), ("meno2", "heslo2")]
+users = []
+
 def vsetky_baliky(woca):
     while woca.get_packages(woca.DOPACKAGE):
         woca.pick_package(0,woca.get_packages(woca.DOPACKAGE))
